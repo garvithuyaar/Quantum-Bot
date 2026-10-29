@@ -7,29 +7,71 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background-color: #030408; color: #f0f0f5; font-family: 'Inter', sans-serif; min-height: 100vh; padding: 40px 20px; background-image: radial-gradient(circle at top, rgba(0,240,255,0.05), transparent 50%); }
+    body { 
+      background-color: #030408; 
+      color: #f0f0f5; 
+      font-family: 'Inter', sans-serif; 
+      min-height: 100vh; 
+      padding: 40px 20px; 
+      background-image: radial-gradient(circle at top, rgba(0,240,255,0.05), transparent 50%); 
+    }
     .container { max-width: 800px; margin: 0 auto; }
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
     .logo { font-size: 24px; font-weight: 800; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 10px; }
     .logo span { background: linear-gradient(100deg, #0077ff, #00f0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .back-btn { color: #aaa; text-decoration: none; font-size: 14px; transition: color 0.3s; }
     .back-btn:hover { color: #00f0ff; }
-    .card { background: #0f111a; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 30px; margin-bottom: 24px; box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5); }
+    
+    .card { 
+      background: #0f111a; 
+      border: 1px solid rgba(255,255,255,0.08); 
+      border-radius: 20px; 
+      padding: 30px; 
+      margin-bottom: 24px; 
+      box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5); 
+    }
     h2 { font-size: 20px; margin-bottom: 20px; font-weight: 600; }
+    
     label { display: block; font-size: 13px; font-weight: 600; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
-    select, input { width: 100%; padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; font-family: 'Inter', sans-serif; font-size: 15px; margin-bottom: 20px; outline: none; transition: border-color 0.3s; }
+    select, input { 
+      width: 100%; 
+      padding: 14px; 
+      background: rgba(255,255,255,0.03); 
+      border: 1px solid rgba(255,255,255,0.1); 
+      border-radius: 10px; 
+      color: #fff; 
+      font-family: 'Inter', sans-serif; 
+      font-size: 15px; 
+      margin-bottom: 20px; 
+      outline: none; 
+      transition: border-color 0.3s; 
+    }
     select:focus, input:focus { border-color: #00f0ff; }
-    .btn { background: linear-gradient(100deg, #0077ff, #00f0ff); color: #fff; border: none; padding: 14px 24px; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; width: 100%; }
+    
+    .btn { 
+      background: linear-gradient(100deg, #0077ff, #00f0ff); 
+      color: #fff; 
+      border: none; 
+      padding: 14px 24px; 
+      border-radius: 10px; 
+      font-weight: 600; 
+      font-size: 15px; 
+      cursor: pointer; 
+      transition: transform 0.3s, box-shadow 0.3s; 
+      width: 100%; 
+    }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px #00f0ff; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+    
     .hidden { display: none !important; }
-    .status { margin-top: 15px; font-size: 14px; text-align: center; }
-    .status.success { color: #34d399; }
-    .status.error { color: #f87171; }
+    .status { margin-top: 15px; font-size: 14px; text-align: center; padding: 10px; border-radius: 8px; }
+    .status.success { color: #34d399; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.2); }
+    .status.error { color: #f87171; background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.2); word-break: break-all; }
+    
     .loader { text-align: center; color: #00f0ff; margin: 40px 0; font-weight: 600; }
     
     .user-info { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); }
-    .user-info img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #00f0ff; }
+    .user-info img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #00f0ff; background: #000; }
     .user-info h3 { font-size: 18px; margin: 0; }
     .user-info p { font-size: 13px; color: #aaa; margin: 0; }
   </style>
@@ -95,7 +137,6 @@
     let currentGuildId = '';
 
     if (!token) {
-      // Check if we have a saved token in localStorage just in case
       const savedToken = localStorage.getItem('quantum_token');
       if (savedToken) {
         window.location.href = `/dashboard.html?token=${savedToken}`;
@@ -109,17 +150,14 @@
 
     async function fetchUserData() {
       try {
-        // 1. Fetch user info
         const res = await fetch(`/api/user-info?token=${token}`);
         const user = await res.json();
         
         if (!user.id) throw new Error("Invalid token");
 
-        // 2. Save to localStorage
         localStorage.setItem('quantum_user', JSON.stringify(user));
         localStorage.setItem('quantum_token', token);
 
-        // 3. Update UI
         const avatarUrl = user.avatar 
           ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` 
           : `https://cdn.discordapp.com/embed/avatars/0.png`;
@@ -128,7 +166,6 @@
         document.getElementById('userName').innerText = user.global_name || user.username;
         document.getElementById('userTag').innerText = `@${user.username}`;
 
-        // 4. Fetch servers
         fetchServers();
         
       } catch (err) {
@@ -186,6 +223,7 @@
     async function saveSettings() {
       const btn = document.getElementById('saveBtn');
       const statusDiv = document.getElementById('saveStatus');
+      
       btn.innerText = 'Connecting to Database...';
       btn.disabled = true;
       statusDiv.classList.add('hidden');
@@ -203,18 +241,31 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
-        if (res.ok) {
+        
+        const result = await res.json();
+        
+        if (res.ok && result.success) {
           statusDiv.innerText = '✅ Settings saved to MongoDB successfully!';
           statusDiv.className = 'status success';
-        } else { throw new Error(); }
+        } else {
+          // This will display the EXACT MongoDB error on the screen
+          throw new Error(result.error || 'Unknown database error');
+        }
       } catch (err) {
-        statusDiv.innerText = '❌ Failed to save to database.';
+        statusDiv.innerText = `❌ ${err.message}`;
         statusDiv.className = 'status error';
       }
+      
       statusDiv.classList.remove('hidden');
       btn.innerText = 'Save Changes to Database';
       btn.disabled = false;
-      setTimeout(() => statusDiv.classList.add('hidden'), 4000);
+      
+      // Keep the error on screen for 8 seconds so you can read it
+      setTimeout(() => {
+        if (statusDiv.classList.contains('success')) {
+          statusDiv.classList.add('hidden');
+        }
+      }, 8000);
     }
   </script>
 </body>
