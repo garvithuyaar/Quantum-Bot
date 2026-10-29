@@ -14,37 +14,23 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --mx: 50vw;
-      --my: 50vh;
-      --bg: #030408;
-      --surface: rgba(255,255,255,0.045);
-      --border: rgba(255,255,255,0.08);
-      --text: #f0f0f5;
-      --blue: #0077ff;
-      --cyan: #00f0ff;
-      --violet: #7c5cff;
-      --green: #34d399;
-      --red: #f87171;
-      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+      --mx: 50vw; --my: 50vh;
+      --bg: #030408; --border: rgba(255,255,255,0.08); --text: #f0f0f5;
+      --blue: #0077ff; --cyan: #00f0ff; --violet: #7c5cff;
+      --green: #34d399; --red: #f87171; --amber: #fbbf24;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
     }
 
     body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: var(--font);
-      font-size: 16px;
-      line-height: 1.6;
-      letter-spacing: -0.011em;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
+      background-color: var(--bg); color: var(--text); font-family: var(--font);
+      min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased;
     }
 
     ::selection { background: rgba(0,240,255,0.3); color: #fff; }
-
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #030408; }
-    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--blue), var(--cyan)); border-radius: 999px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,240,255,0.4); }
 
     a { color: inherit; text-decoration: none; }
     button { font-family: inherit; cursor: pointer; border: none; background: none; }
@@ -52,24 +38,12 @@
     /* ============================================================
        ANIMATIONS & BACKGROUND
     ============================================================ */
-    @keyframes gradientShift {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-    @keyframes auroraMove {
-      0%, 100% { transform: translate3d(0,0,0) scale(1); }
-      33% { transform: translate3d(60px,-40px,0) scale(1.12); }
-      66% { transform: translate3d(-50px,50px,0) scale(0.94); }
-    }
-    @keyframes revealUp {
-      from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
-      to { opacity: 1; transform: translateY(0); filter: blur(0); }
-    }
+    @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    @keyframes auroraMove { 0%, 100% { transform: translate3d(0,0,0) scale(1); } 33% { transform: translate3d(60px,-40px,0) scale(1.12); } 66% { transform: translate3d(-50px,50px,0) scale(0.94); } }
+    @keyframes revealUp { from { opacity: 0; transform: translateY(20px); filter: blur(5px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
     @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.4); }
-      50% { box-shadow: 0 0 20px 5px rgba(0, 240, 255, 0.1); }
-    }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes ping { 0% { transform: scale(1); opacity: 0.8; } 80%, 100% { transform: scale(2.4); opacity: 0; } }
 
     .bg-layer { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
     .bg-base { position: absolute; inset: 0; background: #030408; }
@@ -77,46 +51,39 @@
     .blob-1 { top: -10%; left: -10%; width: 60vh; height: 60vh; background: rgba(0,119,255,0.25); }
     .blob-2 { top: 20%; right: -15%; width: 50vh; height: 50vh; background: rgba(0,240,255,0.15); animation-delay: -8s; }
     .blob-3 { bottom: -20%; left: 30%; width: 55vh; height: 55vh; background: rgba(124,92,255,0.15); animation-delay: -16s; }
-    
-    .bg-grid {
-      position: absolute; inset: 0;
-      background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
-      background-size: 64px 64px;
-      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 100%);
-      mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 100%);
-    }
-    .bg-spotlight {
-      position: absolute; inset: 0;
-      background: radial-gradient(600px circle at var(--mx) var(--my), rgba(0,240,255,0.06), transparent 60%);
-      transition: background 0.1s linear;
-    }
+    .bg-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 64px 64px; -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 100%); }
+    .bg-spotlight { position: absolute; inset: 0; background: radial-gradient(600px circle at var(--mx) var(--my), rgba(0,240,255,0.06), transparent 60%); transition: background 0.1s linear; }
     .bg-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 20%, #030408 100%); }
 
     .site { position: relative; z-index: 1; }
 
     /* ============================================================
-       UTILS
+       TOAST NOTIFICATIONS
     ============================================================ */
-    .container { width: 100%; max-width: 800px; margin: 0 auto; padding: 40px 24px; }
-    
-    .text-gradient {
-      background-image: linear-gradient(100deg, #0077ff 0%, #00f0ff 40%, #7c5cff 80%, #0077ff 100%);
-      background-size: 220% 100%; -webkit-background-clip: text; background-clip: text;
-      color: transparent; -webkit-text-fill-color: transparent; animation: gradientShift 8s ease infinite;
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 12px; }
+    .toast {
+      display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-radius: 12px;
+      background: #0f111a; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      animation: slideIn 0.4s cubic-bezier(0.22,1,0.36,1) forwards; min-width: 300px;
     }
+    .toast.success { border-color: rgba(52,211,153,0.4); }
+    .toast.error { border-color: rgba(248,113,113,0.4); }
+    .toast-icon { width: 24px; height: 24px; }
+    .toast.success .toast-icon { color: var(--green); }
+    .toast.error .toast-icon { color: var(--red); }
+    .toast-msg { font-size: 14px; font-weight: 500; color: #fff; }
 
+    /* ============================================================
+       UI UTILS
+    ============================================================ */
+    .container { width: 100%; max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+    .text-gradient { background-image: linear-gradient(100deg, #0077ff 0%, #00f0ff 40%, #7c5cff 80%, #0077ff 100%); background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: gradientShift 8s ease infinite; }
+    
     .glass-card {
       background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px;
-      margin-bottom: 24px;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 20px 40px -20px rgba(0,0,0,0.7);
-      animation: revealUp 0.6s cubic-bezier(0.22,1,0.36,1) both;
+      border: 1px solid var(--border); border-radius: 20px; padding: 32px; margin-bottom: 24px;
+      backdrop-filter: blur(16px); box-shadow: 0 20px 40px -20px rgba(0,0,0,0.7); animation: revealUp 0.6s cubic-bezier(0.22,1,0.36,1) both;
     }
-
     .hidden { display: none !important; }
 
     /* ============================================================
@@ -124,100 +91,148 @@
     ============================================================ */
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; animation: revealUp 0.6s ease both; }
     .logo { display: flex; align-items: center; gap: 12px; }
-    .logo-img { width: 36px; height: 36px; border-radius: 10px; object-fit: cover; filter: drop-shadow(0 4px 10px rgba(0,240,255,0.4)); }
+    .logo-img { width: 36px; height: 36px; border-radius: 10px; object-fit: cover; }
     .logo-text { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; }
-    .back-btn { 
-      display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.6); 
-      padding: 8px 16px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s;
+    
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .status-pill {
+      display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 50px;
+      background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); font-size: 12px; font-weight: 600; color: var(--green);
     }
-    .back-btn:hover { color: #fff; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); transform: translateX(-3px); }
+    .status-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+    .status-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--green); animation: ping 2s infinite; }
+    
+    .back-btn { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.6); padding: 8px 16px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s; }
+    .back-btn:hover { color: #fff; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
 
-    .user-profile-card {
-      display: flex; align-items: center; gap: 20px; padding: 20px 24px;
-      background: linear-gradient(90deg, rgba(0,119,255,0.1), rgba(0,240,255,0.05));
-      border: 1px solid rgba(0,240,255,0.2); border-radius: 16px; margin-bottom: 30px;
-      animation: revealUp 0.6s cubic-bezier(0.22,1,0.36,1) 0.1s both;
-    }
+    .user-profile-card { display: flex; align-items: center; gap: 20px; padding: 20px 24px; background: linear-gradient(90deg, rgba(0,119,255,0.1), rgba(0,240,255,0.05)); border: 1px solid rgba(0,240,255,0.2); border-radius: 16px; margin-bottom: 24px; animation: revealUp 0.6s ease 0.1s both; }
     .avatar-wrapper { position: relative; }
     .avatar-wrapper img { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--cyan); background: #000; }
-    .online-dot {
-      position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px;
-      background: var(--green); border-radius: 50%; border: 2px solid #0f111a;
-    }
+    .online-dot { position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px; background: var(--green); border-radius: 50%; border: 2px solid #0f111a; }
     .user-details h3 { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
     .user-details p { font-size: 13px; color: rgba(255,255,255,0.5); font-family: monospace; }
 
     /* ============================================================
-       FORMS & INPUTS
+       ANDROID-STYLE SERVER LIST
     ============================================================ */
-    h2 { font-size: 20px; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
-    label { display: block; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em; }
-    
-    .input-group { margin-bottom: 24px; }
-    select, input {
-      width: 100%; padding: 16px; background: rgba(0,0,0,0.3);
-      border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff;
-      font-family: var(--font); font-size: 15px; outline: none; transition: all 0.3s;
+    .server-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right: 8px;
+      margin-top: 16px;
     }
-    select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200.svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
-    select:focus, input:focus { border-color: var(--cyan); background-color: rgba(0,240,255,0.03); box-shadow: 0 0 0 3px rgba(0,240,255,0.1); }
+
+    .server-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .server-item:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.2);
+      transform: translateX(4px);
+    }
+
+    .server-item.active {
+      background: rgba(0,240,255,0.08);
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px rgba(0,240,255,0.15);
+    }
+
+    .server-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--cyan);
+      border-radius: 4px 0 0 4px;
+    }
+
+    .server-icon-img {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: #000;
+      flex-shrink: 0;
+    }
+
+    .server-details { flex-grow: 1; }
+    .server-name { font-size: 16px; font-weight: 600; color: #fff; display: block; margin-bottom: 2px; }
+    .server-meta { font-size: 13px; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 6px; }
+
+    .pro-badge {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      box-shadow: 0 4px 10px rgba(251,191,36,0.3);
+    }
+
+    .chevron-icon {
+      color: rgba(255,255,255,0.3);
+      transition: color 0.3s, transform 0.3s;
+    }
+    .server-item:hover .chevron-icon { color: #fff; transform: translateX(4px); }
+    .server-item.active .chevron-icon { color: var(--cyan); }
+
+    /* ============================================================
+       SETTINGS FORM
+    ============================================================ */
+    .settings-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+    .settings-server-info { display: flex; align-items: center; gap: 16px; }
+    .settings-server-info img { width: 56px; height: 56px; border-radius: 16px; background: #000; }
+    .settings-server-info h3 { font-size: 20px; font-weight: 700; }
+    
+    h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    label { display: block; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em; }
+    .input-group { margin-bottom: 20px; }
+    
+    input { width: 100%; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; font-family: var(--font); font-size: 15px; outline: none; transition: all 0.3s; }
+    input:focus { border-color: var(--cyan); background-color: rgba(0,240,255,0.03); box-shadow: 0 0 0 3px rgba(0,240,255,0.1); }
     
     .helper-text { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 8px; }
     .helper-text b { color: var(--cyan); }
 
-    /* ============================================================
-       BUTTONS & STATUS
-    ============================================================ */
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-      width: 100%; padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 600;
-      transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
-    }
-    .btn-primary {
-      background: linear-gradient(100deg, #0077ff, #00f0ff); color: #fff;
-      box-shadow: 0 10px 30px -10px rgba(0,240,255,0.5); background-size: 150% 100%;
-    }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 600; transition: all 0.3s cubic-bezier(0.22,1,0.36,1); }
+    .btn-primary { background: linear-gradient(100deg, #0077ff, #00f0ff); color: #fff; box-shadow: 0 10px 30px -10px rgba(0,240,255,0.5); background-size: 150% 100%; }
     .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 40px -10px rgba(0,240,255,0.7); background-position: 100% 0; }
     .btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-    .status-msg {
-      display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 12px; font-size: 14px; font-weight: 500; margin-top: 20px;
-      animation: revealUp 0.4s ease both;
-    }
-    .status-success { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); color: var(--green); }
-    .status-error { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: var(--red); }
-
-    /* Icons */
     .icon { width: 20px; height: 20px; }
-    .icon-sm { width: 16px; height: 16px; }
-    .icon-lg { width: 28px; height: 28px; }
+    .icon-sm { width: 14px; height: 14px; }
     .spin { animation: spin 1s linear infinite; }
 
-    /* ============================================================
-       LOADER & ERROR STATE
-    ============================================================ */
-    .center-box { text-align: center; padding: 60px 20px; animation: revealUp 0.6s ease both; }
-    .center-box h2 { justify-content: center; color: var(--red); margin-bottom: 12px; }
-    .center-box p { color: rgba(255,255,255,0.5); margin-bottom: 24px; }
-    
-    .loader-ring {
-      width: 48px; height: 48px; border: 3px solid rgba(0,240,255,0.1); border-top-color: var(--cyan);
-      border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;
-    }
+    /* Loader */
+    .center-box { text-align: center; padding: 60px 20px; }
+    .loader-ring { width: 48px; height: 48px; border: 3px solid rgba(0,240,255,0.1); border-top-color: var(--cyan); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
   </style>
 </head>
 <body>
 
-  <!-- Background Elements -->
+  <!-- Background -->
   <div class="bg-layer">
-    <div class="bg-base"></div>
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-    <div class="bg-grid"></div>
-    <div class="bg-spotlight" id="spotlight"></div>
-    <div class="bg-vignette"></div>
+    <div class="bg-base"></div><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+    <div class="bg-grid"></div><div class="bg-spotlight" id="spotlight"></div><div class="bg-vignette"></div>
   </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
 
   <div class="site">
     <div class="container">
@@ -228,24 +243,27 @@
           <img src="logo.png" alt="Q" class="logo-img" onerror="this.style.display='none'">
           <span class="logo-text">Quantum <span class="text-gradient">Dashboard</span></span>
         </a>
-        <a href="/" class="back-btn">
-          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-          Back to Home
-        </a>
+        <div class="header-right">
+          <div class="status-pill"><div class="status-dot"></div> Bot Online</div>
+          <a href="/" class="back-btn">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Home
+          </a>
+        </div>
       </div>
 
       <!-- LOADING STATE -->
       <div id="loading" class="center-box glass-card">
         <div class="loader-ring"></div>
-        <h2 style="color: var(--cyan);">Authenticating...</h2>
-        <p>Fetching your profile and servers from Discord.</p>
+        <h2 style="color: var(--cyan); justify-content: center;">Authenticating...</h2>
+        <p>Fetching your profile and servers.</p>
       </div>
 
       <!-- ERROR STATE -->
       <div id="errorState" class="center-box glass-card hidden">
-        <svg class="icon-lg" style="color: var(--red); margin: 0 auto 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-        <h2 id="errTitle">Authentication Failed</h2>
-        <p id="errDesc">We could not verify your Discord account. Please try logging in again.</p>
+        <svg class="icon" style="color: var(--red); margin: 0 auto 16px; width: 48px; height: 48px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <h2 id="errTitle" style="justify-content: center; color: var(--red);">Authentication Failed</h2>
+        <p id="errDesc" style="color: rgba(255,255,255,0.5); margin-bottom: 24px;">We could not verify your account.</p>
         <a href="/api/login" class="btn btn-primary" style="max-width: 250px; margin: 0 auto;">Login with Discord</a>
       </div>
 
@@ -264,23 +282,40 @@
           </div>
         </div>
 
-        <!-- SERVER SELECT -->
-        <div class="glass-card" style="animation-delay: 0.1s;">
+        <!-- SERVER LIST (ANDROID COLUMN STYLE) -->
+        <div id="serverSelectionCard" class="glass-card" style="animation-delay: 0.1s;">
           <h2>
-            <svg class="icon" style="color: var(--cyan);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-            Select a Server
+            <svg class="icon" style="color: var(--cyan);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+            Your Servers
           </h2>
-          <label>Server where you have Admin/Manage Server</label>
-          <select id="serverSelect" onchange="loadSettings()">
-            <option value="">Loading your servers...</option>
-          </select>
+          <p style="font-size: 14px; color: rgba(255,255,255,0.5);">Select a server to manage Quantum's settings.</p>
+          
+          <!-- The list gets injected here via JS -->
+          <div class="server-list" id="serverList">
+            <!-- Skeleton loading or cards -->
+          </div>
         </div>
 
         <!-- SETTINGS FORM -->
         <div id="settingsForm" class="glass-card hidden" style="animation-delay: 0.2s;">
+          
+          <div class="settings-header">
+            <div class="settings-server-info">
+              <img id="srvIcon" src="" alt="Server">
+              <div>
+                <h3 id="srvName">Server Name</h3>
+                <p style="font-size: 13px; color: rgba(255,255,255,0.5);"><span id="srvMembers">0</span> Members</p>
+              </div>
+            </div>
+            <button onclick="deselectServer()" class="back-btn" style="padding: 8px 12px;">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              Close
+            </button>
+          </div>
+
           <h2>
-            <svg class="icon" style="color: var(--cyan);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            Server Settings
+            <svg class="icon" style="color: var(--cyan);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            Settings
           </h2>
           
           <div class="input-group">
@@ -301,12 +336,9 @@
           </div>
           
           <button class="btn btn-primary" id="saveBtn" onclick="saveSettings()">
-            <svg id="saveIcon" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-            <span id="saveText">Save Changes to Database</span>
+            <svg id="saveIcon" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            <span id="saveText">Save Changes</span>
           </button>
-          
-          <!-- Status Message Container -->
-          <div id="saveStatus" class="status-msg hidden"></div>
         </div>
       </div>
 
@@ -314,24 +346,23 @@
   </div>
 
   <script>
-    // Background Spotlight
+    // Spotlight Effect
     document.addEventListener('mousemove', (e) => {
       document.documentElement.style.setProperty('--mx', e.clientX + 'px');
       document.documentElement.style.setProperty('--my', e.clientY + 'px');
     });
 
-    // Auth & Data Fetching Logic
+    // Global Data
+    let allServers = [];
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     let currentGuildId = '';
 
+    // Initialization
     if (!token) {
       const savedToken = localStorage.getItem('quantum_token');
-      if (savedToken) {
-        window.location.href = `/dashboard.html?token=${savedToken}`;
-      } else {
-        showError('Authentication Failed', 'No token found. Please log in with Discord.');
-      }
+      if (savedToken) window.location.href = `/dashboard.html?token=${savedToken}`;
+      else showError('Authentication Failed', 'No token found. Please log in with Discord.');
     } else {
       fetchUserData();
     }
@@ -344,6 +375,26 @@
       document.getElementById('errDesc').innerText = desc;
     }
 
+    // Toast System
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      const icon = type === 'success' 
+        ? `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`
+        : `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+
+      toast.innerHTML = `${icon} <span class="toast-msg">${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = 'slideIn 0.3s ease reverse forwards';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // Discord Fetch Logic
     async function fetchUserData() {
       try {
         const res = await fetch(`/api/user-info?token=${token}`);
@@ -351,22 +402,15 @@
         
         if (!user.id) throw new Error("Invalid token");
 
-        // Save to localStorage for persistence
         localStorage.setItem('quantum_user', JSON.stringify(user));
         localStorage.setItem('quantum_token', token);
 
-        // Discord Avatar CDN logic
-        const avatarUrl = user.avatar 
-          ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128` 
-          : `https://cdn.discordapp.com/embed/avatars/${user.discriminator % 5}.png`;
-          
+        const avatarUrl = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128` : `https://cdn.discordapp.com/embed/avatars/0.png`;
         document.getElementById('userAvatar').src = avatarUrl;
         document.getElementById('userName').innerText = user.global_name || user.username;
         document.getElementById('userTag').innerText = `@${user.username}`;
 
-        // Now fetch servers
         fetchServers();
-        
       } catch (err) {
         localStorage.removeItem('quantum_user');
         localStorage.removeItem('quantum_token');
@@ -377,38 +421,98 @@
     async function fetchServers() {
       try {
         const res = await fetch(`/api/user-guilds?token=${token}`);
-        const guilds = await res.json();
-        
+        allServers = await res.json();
         document.getElementById('loading').classList.add('hidden');
 
-        if (!Array.isArray(guilds) || guilds.length === 0) {
-          showError('No Servers Found', 'You need "Manage Server" permissions in a Discord server to use this dashboard.');
+        if (!Array.isArray(allServers) || allServers.length === 0) {
+          showError('No Servers Found', 'The bot must be in your server, and you must have "Manage Server" permissions.');
           return;
         }
 
         document.getElementById('dashboard').classList.remove('hidden');
-        const select = document.getElementById('serverSelect');
-        select.innerHTML = '<option value="">Select a server...</option>';
         
-        guilds.forEach(guild => {
-          select.innerHTML += `<option value="${guild.id}">${guild.name}</option>`;
+        const listContainer = document.getElementById('serverList');
+        listContainer.innerHTML = ''; // Clear loading state
+        
+        allServers.forEach(guild => {
+          const iconUrl = guild.icon 
+            ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=128`
+            : `https://cdn.discordapp.com/embed/avatars/0.png`;
+            
+          const proBadge = guild.isPremium ? `<span class="pro-badge">PRO</span>` : '';
+
+          const item = document.createElement('div');
+          item.className = 'server-item';
+          item.dataset.id = guild.id;
+          item.dataset.name = guild.name;
+          item.dataset.icon = iconUrl;
+          item.dataset.members = guild.memberCount;
+          item.onclick = () => selectServer(item);
+
+          item.innerHTML = `
+            <img src="${iconUrl}" alt="icon" class="server-icon-img">
+            <div class="server-details">
+              <span class="server-name">${guild.name}</span>
+              <span class="server-meta">
+                <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                ${guild.memberCount.toLocaleString()} Members
+              </span>
+            </div>
+            ${proBadge}
+            <svg class="chevron-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          `;
+          
+          listContainer.appendChild(item);
         });
       } catch (err) {
-        showError('Connection Error', 'Failed to load your servers from Discord.');
+        showError('Connection Error', 'Failed to load servers from Discord.');
       }
     }
 
-    async function loadSettings() {
-      const select = document.getElementById('serverSelect');
-      currentGuildId = select.value;
-      
-      if (!currentGuildId) {
-        document.getElementById('settingsForm').classList.add('hidden');
-        return;
-      }
+    // Selection Logic
+    function selectServer(element) {
+      // Remove active class from all
+      document.querySelectorAll('.server-item').forEach(el => el.classList.remove('active'));
+      // Add active to clicked
+      element.classList.add('active');
 
+      // Get data
+      currentGuildId = element.dataset.id;
+      const name = element.dataset.name;
+      const icon = element.dataset.icon;
+      const members = parseInt(element.dataset.members).toLocaleString();
+
+      // Update UI
+      document.getElementById('srvName').innerText = name;
+      document.getElementById('srvIcon').src = icon;
+      document.getElementById('srvMembers').innerText = members;
+      
+      // Show Settings Form
       document.getElementById('settingsForm').classList.remove('hidden');
-      document.getElementById('saveStatus').classList.add('hidden');
+      
+      // Scroll to settings form smoothly
+      setTimeout(() => {
+        document.getElementById('settingsForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+
+      loadSettings();
+    }
+
+    function deselectServer() {
+      currentGuildId = '';
+      document.querySelectorAll('.server-item').forEach(el => el.classList.remove('active'));
+      document.getElementById('settingsForm').classList.add('hidden');
+      document.getElementById('serverSelectionCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Settings Logic
+    async function loadSettings() {
+      if (!currentGuildId) return;
+      
+      // Set Inputs to loading state
+      document.getElementById('prefixInput').value = '...';
+      document.getElementById('channelInput').value = '...';
+      document.getElementById('messageInput').value = '...';
       
       try {
         const res = await fetch(`/api/get-settings?guildId=${currentGuildId}`);
@@ -418,7 +522,7 @@
         document.getElementById('channelInput').value = settings.welcomeChannel || '';
         document.getElementById('messageInput').value = settings.welcomeMessage || '';
       } catch (err) {
-        console.error("Failed to load settings");
+        showToast('Failed to load settings', 'error');
       }
     }
 
@@ -426,13 +530,10 @@
       const btn = document.getElementById('saveBtn');
       const saveIcon = document.getElementById('saveIcon');
       const saveText = document.getElementById('saveText');
-      const statusDiv = document.getElementById('saveStatus');
       
-      // Set Loading State
       btn.disabled = true;
       saveIcon.classList.add('spin');
-      saveText.innerText = 'Connecting to Database...';
-      statusDiv.classList.add('hidden');
+      saveText.innerText = 'Saving...';
 
       const data = {
         guildId: currentGuildId,
@@ -451,28 +552,16 @@
         const result = await res.json();
         
         if (res.ok && result.success) {
-          // Success UI
-          statusDiv.className = 'status-msg status-success';
-          statusDiv.innerHTML = `
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-            <span>Settings saved to MongoDB successfully!</span>
-          `;
+          showToast('Settings saved successfully!', 'success');
         } else {
           throw new Error(result.error || 'Unknown database error');
         }
       } catch (err) {
-        // Error UI
-        statusDiv.className = 'status-msg status-error';
-        statusDiv.innerHTML = `
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-          <span>${err.message}</span>
-        `;
+        showToast(err.message, 'error');
       } finally {
-        // Reset Button State
-        statusDiv.classList.remove('hidden');
         btn.disabled = false;
         saveIcon.classList.remove('spin');
-        saveText.innerText = 'Save Changes to Database';
+        saveText.innerText = 'Save Changes';
       }
     }
   </script>
