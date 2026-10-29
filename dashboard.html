@@ -4,134 +4,323 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quantum Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
-      background-color: #030408; 
-      color: #f0f0f5; 
-      font-family: 'Inter', sans-serif; 
-      min-height: 100vh; 
-      padding: 40px 20px; 
-      background-image: radial-gradient(circle at top, rgba(0,240,255,0.05), transparent 50%); 
+    /* ============================================================
+       RESET & ROOT
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --mx: 50vw;
+      --my: 50vh;
+      --bg: #030408;
+      --surface: rgba(255,255,255,0.045);
+      --border: rgba(255,255,255,0.08);
+      --text: #f0f0f5;
+      --blue: #0077ff;
+      --cyan: #00f0ff;
+      --violet: #7c5cff;
+      --green: #34d399;
+      --red: #f87171;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
     }
-    .container { max-width: 800px; margin: 0 auto; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-    .logo { font-size: 24px; font-weight: 800; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 10px; }
-    .logo span { background: linear-gradient(100deg, #0077ff, #00f0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .back-btn { color: #aaa; text-decoration: none; font-size: 14px; transition: color 0.3s; }
-    .back-btn:hover { color: #00f0ff; }
-    
-    .card { 
-      background: #0f111a; 
-      border: 1px solid rgba(255,255,255,0.08); 
-      border-radius: 20px; 
-      padding: 30px; 
-      margin-bottom: 24px; 
-      box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5); 
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.6;
+      letter-spacing: -0.011em;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
     }
-    h2 { font-size: 20px; margin-bottom: 20px; font-weight: 600; }
-    
-    label { display: block; font-size: 13px; font-weight: 600; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
-    select, input { 
-      width: 100%; 
-      padding: 14px; 
-      background: rgba(255,255,255,0.03); 
-      border: 1px solid rgba(255,255,255,0.1); 
-      border-radius: 10px; 
-      color: #fff; 
-      font-family: 'Inter', sans-serif; 
-      font-size: 15px; 
-      margin-bottom: 20px; 
-      outline: none; 
-      transition: border-color 0.3s; 
+
+    ::selection { background: rgba(0,240,255,0.3); color: #fff; }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #030408; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--blue), var(--cyan)); border-radius: 999px; }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    /* ============================================================
+       ANIMATIONS & BACKGROUND
+    ============================================================ */
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
-    select:focus, input:focus { border-color: #00f0ff; }
-    
-    .btn { 
-      background: linear-gradient(100deg, #0077ff, #00f0ff); 
-      color: #fff; 
-      border: none; 
-      padding: 14px 24px; 
-      border-radius: 10px; 
-      font-weight: 600; 
-      font-size: 15px; 
-      cursor: pointer; 
-      transition: transform 0.3s, box-shadow 0.3s; 
-      width: 100%; 
+    @keyframes auroraMove {
+      0%, 100% { transform: translate3d(0,0,0) scale(1); }
+      33% { transform: translate3d(60px,-40px,0) scale(1.12); }
+      66% { transform: translate3d(-50px,50px,0) scale(0.94); }
     }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px #00f0ff; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+    @keyframes revealUp {
+      from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.4); }
+      50% { box-shadow: 0 0 20px 5px rgba(0, 240, 255, 0.1); }
+    }
+
+    .bg-layer { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .bg-base { position: absolute; inset: 0; background: #030408; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(120px); animation: auroraMove 24s ease-in-out infinite; }
+    .blob-1 { top: -10%; left: -10%; width: 60vh; height: 60vh; background: rgba(0,119,255,0.25); }
+    .blob-2 { top: 20%; right: -15%; width: 50vh; height: 50vh; background: rgba(0,240,255,0.15); animation-delay: -8s; }
+    .blob-3 { bottom: -20%; left: 30%; width: 55vh; height: 55vh; background: rgba(124,92,255,0.15); animation-delay: -16s; }
     
+    .bg-grid {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 64px 64px;
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 100%);
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 100%);
+    }
+    .bg-spotlight {
+      position: absolute; inset: 0;
+      background: radial-gradient(600px circle at var(--mx) var(--my), rgba(0,240,255,0.06), transparent 60%);
+      transition: background 0.1s linear;
+    }
+    .bg-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 20%, #030408 100%); }
+
+    .site { position: relative; z-index: 1; }
+
+    /* ============================================================
+       UTILS
+    ============================================================ */
+    .container { width: 100%; max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+    
+    .text-gradient {
+      background-image: linear-gradient(100deg, #0077ff 0%, #00f0ff 40%, #7c5cff 80%, #0077ff 100%);
+      background-size: 220% 100%; -webkit-background-clip: text; background-clip: text;
+      color: transparent; -webkit-text-fill-color: transparent; animation: gradientShift 8s ease infinite;
+    }
+
+    .glass-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 20px 40px -20px rgba(0,0,0,0.7);
+      animation: revealUp 0.6s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
     .hidden { display: none !important; }
-    .status { margin-top: 15px; font-size: 14px; text-align: center; padding: 10px; border-radius: 8px; }
-    .status.success { color: #34d399; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.2); }
-    .status.error { color: #f87171; background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.2); word-break: break-all; }
+
+    /* ============================================================
+       HEADER & PROFILE
+    ============================================================ */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; animation: revealUp 0.6s ease both; }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-img { width: 36px; height: 36px; border-radius: 10px; object-fit: cover; filter: drop-shadow(0 4px 10px rgba(0,240,255,0.4)); }
+    .logo-text { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; }
+    .back-btn { 
+      display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.6); 
+      padding: 8px 16px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s;
+    }
+    .back-btn:hover { color: #fff; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); transform: translateX(-3px); }
+
+    .user-profile-card {
+      display: flex; align-items: center; gap: 20px; padding: 20px 24px;
+      background: linear-gradient(90deg, rgba(0,119,255,0.1), rgba(0,240,255,0.05));
+      border: 1px solid rgba(0,240,255,0.2); border-radius: 16px; margin-bottom: 30px;
+      animation: revealUp 0.6s cubic-bezier(0.22,1,0.36,1) 0.1s both;
+    }
+    .avatar-wrapper { position: relative; }
+    .avatar-wrapper img { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--cyan); background: #000; }
+    .online-dot {
+      position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px;
+      background: var(--green); border-radius: 50%; border: 2px solid #0f111a;
+    }
+    .user-details h3 { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+    .user-details p { font-size: 13px; color: rgba(255,255,255,0.5); font-family: monospace; }
+
+    /* ============================================================
+       FORMS & INPUTS
+    ============================================================ */
+    h2 { font-size: 20px; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
+    label { display: block; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em; }
     
-    .loader { text-align: center; color: #00f0ff; margin: 40px 0; font-weight: 600; }
+    .input-group { margin-bottom: 24px; }
+    select, input {
+      width: 100%; padding: 16px; background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff;
+      font-family: var(--font); font-size: 15px; outline: none; transition: all 0.3s;
+    }
+    select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200.svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+    select:focus, input:focus { border-color: var(--cyan); background-color: rgba(0,240,255,0.03); box-shadow: 0 0 0 3px rgba(0,240,255,0.1); }
     
-    .user-info { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); }
-    .user-info img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #00f0ff; background: #000; }
-    .user-info h3 { font-size: 18px; margin: 0; }
-    .user-info p { font-size: 13px; color: #aaa; margin: 0; }
+    .helper-text { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 8px; }
+    .helper-text b { color: var(--cyan); }
+
+    /* ============================================================
+       BUTTONS & STATUS
+    ============================================================ */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
+    }
+    .btn-primary {
+      background: linear-gradient(100deg, #0077ff, #00f0ff); color: #fff;
+      box-shadow: 0 10px 30px -10px rgba(0,240,255,0.5); background-size: 150% 100%;
+    }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 40px -10px rgba(0,240,255,0.7); background-position: 100% 0; }
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    .status-msg {
+      display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 12px; font-size: 14px; font-weight: 500; margin-top: 20px;
+      animation: revealUp 0.4s ease both;
+    }
+    .status-success { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); color: var(--green); }
+    .status-error { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: var(--red); }
+
+    /* Icons */
+    .icon { width: 20px; height: 20px; }
+    .icon-sm { width: 16px; height: 16px; }
+    .icon-lg { width: 28px; height: 28px; }
+    .spin { animation: spin 1s linear infinite; }
+
+    /* ============================================================
+       LOADER & ERROR STATE
+    ============================================================ */
+    .center-box { text-align: center; padding: 60px 20px; animation: revealUp 0.6s ease both; }
+    .center-box h2 { justify-content: center; color: var(--red); margin-bottom: 12px; }
+    .center-box p { color: rgba(255,255,255,0.5); margin-bottom: 24px; }
+    
+    .loader-ring {
+      width: 48px; height: 48px; border: 3px solid rgba(0,240,255,0.1); border-top-color: var(--cyan);
+      border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <a href="/" class="logo">
-        <img src="logo.png" alt="Q" style="width: 32px; height: 32px; border-radius: 8px;" onerror="this.style.display='none'">
-        <span>Quantum Dashboard</span>
-      </a>
-      <a href="/" class="back-btn">← Back to Home</a>
-    </div>
 
-    <div id="loading" class="loader">Authenticating & fetching your data...</div>
+  <!-- Background Elements -->
+  <div class="bg-layer">
+    <div class="bg-base"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-spotlight" id="spotlight"></div>
+    <div class="bg-vignette"></div>
+  </div>
 
-    <div id="errorState" class="card hidden" style="text-align: center;">
-      <h2 style="color: #f87171;">Authentication Failed</h2>
-      <p style="color: #aaa; margin-bottom: 20px;">We could not verify your Discord account. Please try logging in again.</p>
-      <a href="/api/login" class="btn" style="text-decoration: none; display: inline-block;">Login with Discord</a>
-    </div>
-
-    <div id="dashboard" class="hidden">
+  <div class="site">
+    <div class="container">
       
-      <!-- User Profile Info -->
-      <div class="user-info">
-        <img id="userAvatar" src="" alt="Avatar">
-        <div>
-          <h3 id="userName">Loading...</h3>
-          <p id="userTag">Discord User</p>
+      <!-- HEADER -->
+      <div class="header">
+        <a href="/" class="logo">
+          <img src="logo.png" alt="Q" class="logo-img" onerror="this.style.display='none'">
+          <span class="logo-text">Quantum <span class="text-gradient">Dashboard</span></span>
+        </a>
+        <a href="/" class="back-btn">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back to Home
+        </a>
+      </div>
+
+      <!-- LOADING STATE -->
+      <div id="loading" class="center-box glass-card">
+        <div class="loader-ring"></div>
+        <h2 style="color: var(--cyan);">Authenticating...</h2>
+        <p>Fetching your profile and servers from Discord.</p>
+      </div>
+
+      <!-- ERROR STATE -->
+      <div id="errorState" class="center-box glass-card hidden">
+        <svg class="icon-lg" style="color: var(--red); margin: 0 auto 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <h2 id="errTitle">Authentication Failed</h2>
+        <p id="errDesc">We could not verify your Discord account. Please try logging in again.</p>
+        <a href="/api/login" class="btn btn-primary" style="max-width: 250px; margin: 0 auto;">Login with Discord</a>
+      </div>
+
+      <!-- DASHBOARD CONTENT -->
+      <div id="dashboard" class="hidden">
+        
+        <!-- USER PROFILE -->
+        <div class="user-profile-card">
+          <div class="avatar-wrapper">
+            <img id="userAvatar" src="" alt="Avatar">
+            <div class="online-dot"></div>
+          </div>
+          <div class="user-details">
+            <h3 id="userName">Loading...</h3>
+            <p id="userTag">#0000</p>
+          </div>
+        </div>
+
+        <!-- SERVER SELECT -->
+        <div class="glass-card" style="animation-delay: 0.1s;">
+          <h2>
+            <svg class="icon" style="color: var(--cyan);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+            Select a Server
+          </h2>
+          <label>Server where you have Admin/Manage Server</label>
+          <select id="serverSelect" onchange="loadSettings()">
+            <option value="">Loading your servers...</option>
+          </select>
+        </div>
+
+        <!-- SETTINGS FORM -->
+        <div id="settingsForm" class="glass-card hidden" style="animation-delay: 0.2s;">
+          <h2>
+            <svg class="icon" style="color: var(--cyan);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            Server Settings
+          </h2>
+          
+          <div class="input-group">
+            <label>Command Prefix</label>
+            <input type="text" id="prefixInput" placeholder="!" maxlength="5">
+          </div>
+
+          <div class="input-group">
+            <label>Welcome Channel ID</label>
+            <input type="text" id="channelInput" placeholder="e.g. 123456789012345678">
+            <div class="helper-text">Right-click a channel in Discord and click <b>Copy ID</b>.</div>
+          </div>
+
+          <div class="input-group">
+            <label>Welcome Message</label>
+            <input type="text" id="messageInput" placeholder="Welcome {user} to {server}!">
+            <div class="helper-text">Use <b>{user}</b> to mention the member, and <b>{server}</b> for the server name.</div>
+          </div>
+          
+          <button class="btn btn-primary" id="saveBtn" onclick="saveSettings()">
+            <svg id="saveIcon" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            <span id="saveText">Save Changes to Database</span>
+          </button>
+          
+          <!-- Status Message Container -->
+          <div id="saveStatus" class="status-msg hidden"></div>
         </div>
       </div>
 
-      <div class="card">
-        <h2>Select a Server</h2>
-        <label>Server where you have Admin/Manage Server</label>
-        <select id="serverSelect" onchange="loadSettings()">
-          <option value="">Loading servers...</option>
-        </select>
-      </div>
-
-      <div id="settingsForm" class="card hidden">
-        <h2>Server Settings</h2>
-        
-        <label>Command Prefix</label>
-        <input type="text" id="prefixInput" placeholder="!" maxlength="5">
-
-        <label>Welcome Channel ID</label>
-        <input type="text" id="channelInput" placeholder="e.g. 123456789012345678">
-
-        <label>Welcome Message</label>
-        <input type="text" id="messageInput" placeholder="Welcome {user} to {server}!">
-        
-        <button class="btn" id="saveBtn" onclick="saveSettings()">Save Changes to Database</button>
-        <div id="saveStatus" class="status hidden"></div>
-      </div>
     </div>
   </div>
 
   <script>
+    // Background Spotlight
+    document.addEventListener('mousemove', (e) => {
+      document.documentElement.style.setProperty('--mx', e.clientX + 'px');
+      document.documentElement.style.setProperty('--my', e.clientY + 'px');
+    });
+
+    // Auth & Data Fetching Logic
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     let currentGuildId = '';
@@ -141,11 +330,18 @@
       if (savedToken) {
         window.location.href = `/dashboard.html?token=${savedToken}`;
       } else {
-        document.getElementById('loading').classList.add('hidden');
-        document.getElementById('errorState').classList.remove('hidden');
+        showError('Authentication Failed', 'No token found. Please log in with Discord.');
       }
     } else {
       fetchUserData();
+    }
+
+    function showError(title, desc) {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('dashboard').classList.add('hidden');
+      document.getElementById('errorState').classList.remove('hidden');
+      document.getElementById('errTitle').innerText = title;
+      document.getElementById('errDesc').innerText = desc;
     }
 
     async function fetchUserData() {
@@ -155,24 +351,26 @@
         
         if (!user.id) throw new Error("Invalid token");
 
+        // Save to localStorage for persistence
         localStorage.setItem('quantum_user', JSON.stringify(user));
         localStorage.setItem('quantum_token', token);
 
+        // Discord Avatar CDN logic
         const avatarUrl = user.avatar 
-          ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` 
-          : `https://cdn.discordapp.com/embed/avatars/0.png`;
+          ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128` 
+          : `https://cdn.discordapp.com/embed/avatars/${user.discriminator % 5}.png`;
           
         document.getElementById('userAvatar').src = avatarUrl;
         document.getElementById('userName').innerText = user.global_name || user.username;
         document.getElementById('userTag').innerText = `@${user.username}`;
 
+        // Now fetch servers
         fetchServers();
         
       } catch (err) {
         localStorage.removeItem('quantum_user');
         localStorage.removeItem('quantum_token');
-        document.getElementById('loading').classList.add('hidden');
-        document.getElementById('errorState').classList.remove('hidden');
+        showError('Session Expired', 'Your login session is invalid. Please log in again.');
       }
     }
 
@@ -180,52 +378,60 @@
       try {
         const res = await fetch(`/api/user-guilds?token=${token}`);
         const guilds = await res.json();
+        
         document.getElementById('loading').classList.add('hidden');
 
         if (!Array.isArray(guilds) || guilds.length === 0) {
-          document.getElementById('errorState').classList.remove('hidden');
-          document.getElementById('errorState').querySelector('h2').innerText = 'No Servers Found';
-          document.getElementById('errorState').querySelector('p').innerText = 'You need "Manage Server" permissions in a Discord server.';
+          showError('No Servers Found', 'You need "Manage Server" permissions in a Discord server to use this dashboard.');
           return;
         }
 
         document.getElementById('dashboard').classList.remove('hidden');
         const select = document.getElementById('serverSelect');
         select.innerHTML = '<option value="">Select a server...</option>';
+        
         guilds.forEach(guild => {
           select.innerHTML += `<option value="${guild.id}">${guild.name}</option>`;
         });
       } catch (err) {
-        document.getElementById('loading').classList.add('hidden');
-        document.getElementById('errorState').classList.remove('hidden');
+        showError('Connection Error', 'Failed to load your servers from Discord.');
       }
     }
 
     async function loadSettings() {
       const select = document.getElementById('serverSelect');
       currentGuildId = select.value;
+      
       if (!currentGuildId) {
         document.getElementById('settingsForm').classList.add('hidden');
         return;
       }
+
       document.getElementById('settingsForm').classList.remove('hidden');
       document.getElementById('saveStatus').classList.add('hidden');
       
       try {
         const res = await fetch(`/api/get-settings?guildId=${currentGuildId}`);
         const settings = await res.json();
+        
         document.getElementById('prefixInput').value = settings.prefix || '!';
         document.getElementById('channelInput').value = settings.welcomeChannel || '';
         document.getElementById('messageInput').value = settings.welcomeMessage || '';
-      } catch (err) { console.error("Failed to load settings"); }
+      } catch (err) {
+        console.error("Failed to load settings");
+      }
     }
 
     async function saveSettings() {
       const btn = document.getElementById('saveBtn');
+      const saveIcon = document.getElementById('saveIcon');
+      const saveText = document.getElementById('saveText');
       const statusDiv = document.getElementById('saveStatus');
       
-      btn.innerText = 'Connecting to Database...';
+      // Set Loading State
       btn.disabled = true;
+      saveIcon.classList.add('spin');
+      saveText.innerText = 'Connecting to Database...';
       statusDiv.classList.add('hidden');
 
       const data = {
@@ -245,27 +451,29 @@
         const result = await res.json();
         
         if (res.ok && result.success) {
-          statusDiv.innerText = '✅ Settings saved to MongoDB successfully!';
-          statusDiv.className = 'status success';
+          // Success UI
+          statusDiv.className = 'status-msg status-success';
+          statusDiv.innerHTML = `
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <span>Settings saved to MongoDB successfully!</span>
+          `;
         } else {
-          // This will display the EXACT MongoDB error on the screen
           throw new Error(result.error || 'Unknown database error');
         }
       } catch (err) {
-        statusDiv.innerText = `❌ ${err.message}`;
-        statusDiv.className = 'status error';
+        // Error UI
+        statusDiv.className = 'status-msg status-error';
+        statusDiv.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span>${err.message}</span>
+        `;
+      } finally {
+        // Reset Button State
+        statusDiv.classList.remove('hidden');
+        btn.disabled = false;
+        saveIcon.classList.remove('spin');
+        saveText.innerText = 'Save Changes to Database';
       }
-      
-      statusDiv.classList.remove('hidden');
-      btn.innerText = 'Save Changes to Database';
-      btn.disabled = false;
-      
-      // Keep the error on screen for 8 seconds so you can read it
-      setTimeout(() => {
-        if (statusDiv.classList.contains('success')) {
-          statusDiv.classList.add('hidden');
-        }
-      }, 8000);
     }
   </script>
 </body>
