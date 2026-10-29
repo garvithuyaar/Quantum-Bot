@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #030408;
+      color: #f0f0f5;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 40px 20px;
+      background-image: radial-gradient(circle at top, rgba(0,240,255,0.05), transparent 50%);
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+    .logo { font-size: 24px; font-weight: 800; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+    .logo span { background: linear-gradient(100deg, #0077ff, #00f0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .back-btn { color: #aaa; text-decoration: none; font-size: 14px; transition: color 0.3s; }
+    .back-btn:hover { color: #00f0ff; }
+    
+    .card {
+      background: #0f111a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 24px;
+      box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5);
+    }
+    h2 { font-size: 20px; margin-bottom: 20px; font-weight: 600; }
+    
+    label { display: block; font-size: 13px; font-weight: 600; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+    select, input {
+      width: 100%;
+      padding: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      margin-bottom: 20px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    select:focus, input:focus { border-color: #00f0ff; }
+    
+    .btn {
+      background: linear-gradient(100deg, #0077ff, #00f0ff);
+      color: #fff;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      width: 100%;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px #00f0ff; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+    
+    .hidden { display: none !important; }
+    .status { margin-top: 15px; font-size: 14px; text-align: center; }
+    .status.success { color: #34d399; }
+    .status.error { color: #f87171; }
+    
+    .loader { text-align: center; color: #00f0ff; margin: 40px 0; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <a href="/" class="logo">
+        <img src="logo.png" alt="Q" style="width: 32px; height: 32px; border-radius: 8px;" onerror="this.style.display='none'">
+        <span>Quantum Dashboard</span>
+      </a>
+      <a href="/" class="back-btn">← Back to Home</a>
+    </div>
+
+    <div id="loading" class="loader">Authenticating & fetching your servers from Discord...</div>
+
+    <div id="errorState" class="card hidden" style="text-align: center;">
+      <h2 style="color: #f87171;">Authentication Failed</h2>
+      <p style="color: #aaa; margin-bottom: 20px;">We could not verify your Discord account. Please try logging in again.</p>
+      <a href="/api/login" class="btn" style="text-decoration: none; display: inline-block;">Login with Discord</a>
+    </div>
+
+    <div id="dashboard" class="hidden">
+      <div class="card">
+        <h2>Select a Server</h2>
+        <label>Server where you have Admin/Manage Server</label>
+        <select id="serverSelect" onchange="loadSettings()">
+          <option value="">Loading servers...</option>
+        </select>
+      </div>
+
+      <div id="settingsForm" class="card hidden">
+        <h2>Server Settings</h2>
+        
+        <label>Command Prefix</label>
+        <input type="text" id="prefixInput" placeholder="!" maxlength="5">
+
+        <label>Welcome Channel ID (Right click channel -> Copy ID)</label>
+        <input type="text" id="channelInput" placeholder="e.g. 123456789012345678">
+
+        <label>Welcome Message</label>
+        <input type="text" id="messageInput" placeholder="Welcome {user} to {server}!">
+        <p style="font-size: 12px; color: #666; margin-top: -15px; margin-bottom: 20px;">
+          Use <b>{user}</b> to mention the member, and <b>{server}</b> for the server name.
+        </p>
+
+        <button class="btn" id="saveBtn" onclick="saveSettings()">Save Changes to Database</button>
+        <div id="saveStatus" class="status hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 1. Get the token passed from your Vercel /api/callback.js
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    let currentGuildId = '';
+
+    if (!token) {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('errorState').classList.remove('hidden');
+    } else {
+      fetchServers();
+    }
+
+    // 2. Fetch Guilds via Vercel API
+    async function fetchServers() {
+      try {
+        const res = await fetch(`/api/user-guilds?token=${token}`);
+        const guilds = await res.json();
+        
+        document.getElementById('loading').classList.add('hidden');
+
+        if (!Array.isArray(guilds) || guilds.length === 0) {
+          document.getElementById('errorState').classList.remove('hidden');
+          document.getElementById('errorState').querySelector('h2').innerText = 'No Servers Found';
+          document.getElementById('errorState').querySelector('p').innerText = 'You need "Manage Server" permissions in a Discord server to use the dashboard.';
+          return;
+        }
+
+        document.getElementById('dashboard').classList.remove('hidden');
+        const select = document.getElementById('serverSelect');
+        select.innerHTML = '<option value="">Select a server...</option>';
+        
+        guilds.forEach(guild => {
+          select.innerHTML += `<option value="${guild.id}">${guild.name}</option>`;
+        });
+
+      } catch (err) {
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('errorState').classList.remove('hidden');
+      }
+    }
+
+    // 3. Load current settings from MongoDB via Vercel API
+    async function loadSettings() {
+      const select = document.getElementById('serverSelect');
+      currentGuildId = select.value;
+      
+      if (!currentGuildId) {
+        document.getElementById('settingsForm').classList.add('hidden');
+        return;
+      }
+
+      document.getElementById('settingsForm').classList.remove('hidden');
+      document.getElementById('saveStatus').classList.add('hidden');
+      
+      try {
+        const res = await fetch(`/api/get-settings?guildId=${currentGuildId}`);
+        const settings = await res.json();
+
+        document.getElementById('prefixInput').value = settings.prefix || '!';
+        document.getElementById('channelInput').value = settings.welcomeChannel || '';
+        document.getElementById('messageInput').value = settings.welcomeMessage || '';
+      } catch (err) {
+        console.error("Failed to load settings from API");
+      }
+    }
+
+    // 4. Save settings to MongoDB via Vercel API
+    async function saveSettings() {
+      const btn = document.getElementById('saveBtn');
+      const statusDiv = document.getElementById('saveStatus');
+      
+      btn.innerText = 'Connecting to Database...';
+      btn.disabled = true;
+      statusDiv.classList.add('hidden');
+
+      const data = {
+        guildId: currentGuildId,
+        prefix: document.getElementById('prefixInput').value,
+        welcomeChannel: document.getElementById('channelInput').value,
+        welcomeMessage: document.getElementById('messageInput').value
+      };
+
+      try {
+        const res = await fetch('/api/save-settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        if (res.ok) {
+          statusDiv.innerText = '✅ Settings saved to MongoDB successfully!';
+          statusDiv.className = 'status success';
+        } else {
+          throw new Error();
+        }
+      } catch (err) {
+        statusDiv.innerText = '❌ Failed to save to database. Check Vercel logs.';
+        statusDiv.className = 'status error';
+      }
+
+      statusDiv.classList.remove('hidden');
+      btn.innerText = 'Save Changes to Database';
+      btn.disabled = false;
+      
+      setTimeout(() => statusDiv.classList.add('hidden'), 4000);
+    }
+  </script>
+</body>
+</html>
