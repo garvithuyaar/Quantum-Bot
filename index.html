@@ -239,7 +239,6 @@
 
     .brand { display: flex; align-items: center; gap: 12px; }
     
-    /* Custom Logo Image */
     .brand-logo {
       width: 38px; height: 38px;
       border-radius: 10px;
@@ -315,36 +314,6 @@
       grid-template-columns: 1.1fr 0.9fr;
       gap: 60px;
       align-items: center;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,240,255,0.3);
-      background: rgba(0,240,255,0.08);
-      padding: 8px 16px;
-      font-size: 12.5px;
-      font-weight: 500;
-      color: #a5f3fc;
-      backdrop-filter: blur(12px);
-      animation: revealUp 0.8s cubic-bezier(0.22,1,0.36,1) both;
-    }
-    .live-dot {
-      position: relative;
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 10px var(--cyan);
-    }
-    .live-dot::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: var(--cyan);
-      animation: ping 2s cubic-bezier(0,0,0.2,1) infinite;
     }
 
     .hero h1 {
@@ -912,85 +881,6 @@
     }
 
     /* ============================================================
-       GOOGLE LOGIN MODAL
-    ============================================================ */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(10px);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      padding: 20px;
-    }
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .login-modal {
-      background: #0f111a;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 24px;
-      width: 100%;
-      max-width: 420px;
-      padding: 40px;
-      text-align: center;
-      transform: translateY(20px) scale(0.95);
-      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
-      box-shadow: 0 40px 100px -20px rgba(0,0,0,0.9), 0 0 40px rgba(0,240,255,0.1);
-      position: relative;
-    }
-    .modal-overlay.active .login-modal {
-      transform: translateY(0) scale(1);
-    }
-    .modal-close {
-      position: absolute;
-      top: 16px; right: 16px;
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
-      display: grid;
-      place-items: center;
-      color: rgba(255,255,255,0.5);
-      transition: background 0.2s, color 0.2s;
-    }
-    .modal-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
-    
-    .login-modal h3 {
-      font-size: 24px;
-      font-weight: 700;
-      margin: 20px 0 8px;
-    }
-    .login-modal p {
-      font-size: 14.5px;
-      color: rgba(240,240,245,0.5);
-      margin-bottom: 32px;
-      line-height: 1.5;
-    }
-    
-    .google-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      width: 100%;
-      padding: 14px;
-      background: #fff;
-      color: #333;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: 600;
-      transition: background 0.2s, transform 0.2s;
-    }
-    .google-btn:hover { background: #f1f1f1; transform: translateY(-1px); }
-    .google-btn svg { width: 20px; height: 20px; }
-
-    /* ============================================================
        RESPONSIVE DESIGN
     ============================================================ */
     @media (max-width: 1024px) {
@@ -1025,7 +915,7 @@
       .hero-actions .btn { width: 100%; }
       .footer-grid { grid-template-columns: 1fr; gap: 32px; }
       .footer-bottom { flex-direction: column; text-align: center; }
-      .chip { display: none; /* Hide floating chips on very small screens to prevent overflow */ }
+      .chip { display: none; }
     }
 
     /* Scroll Reveal */
@@ -1056,8 +946,7 @@
     <div class="navbar-wrap" id="navbarWrap">
       <nav class="navbar" id="navbar">
         <a href="#" class="brand">
-          <!-- Use local logo.png or replace with your direct image link -->
-          <img src="logo.png" alt="Quantum Logo" class="brand-logo">
+          <img src="logo.png" alt="Quantum Logo" class="brand-logo" onerror="this.src='https://cdn.discordapp.com/attachments/1537127358677520434/1565226534833229885/file_00000000eb5481faa673a17490c24af9.png?ex=6ae4224e&is=6ae2d0ce&hm=fc62d1b7b4a518eead855049686bcd4ad289624e84d3b72e6ce59a3fd4702770&'">
           <span class="brand-name">Quantum</span>
         </a>
 
@@ -1070,7 +959,7 @@
         </div>
 
         <div class="nav-actions">
-          <button onclick="openLoginModal()" class="btn btn-glass btn-login" style="padding:10px 20px; font-size:13.5px;">
+          <button onclick="window.location.href='/api/login'" class="btn btn-glass btn-login" style="padding:10px 20px; font-size:13.5px;">
             Login
           </button>
           <a href="https://discord.com/oauth2/authorize?client_id=1565042598760943616"
@@ -1094,7 +983,7 @@
         <a href="#pricing">Pricing</a>
         <a href="#updates">Updates</a>
         <a href="#faq">FAQ</a>
-        <a href="#" onclick="openLoginModal()" style="color:#00f0ff; font-weight:600;">Login</a>
+        <a href="/api/login" style="color:#00f0ff; font-weight:600;">Login with Discord</a>
       </div>
     </div>
 
@@ -1103,10 +992,6 @@
       <div class="container">
         <div class="hero-grid">
           <div class="hero-copy">
-            <div class="hero-badge">
-              <span class="live-dot"></span>
-              v2.4 is live — Quantum Shield 2.0
-            </div>
             <h1>
               Moderation at the<br />
               <span class="text-gradient">speed of Quantum.</span>
@@ -1123,8 +1008,8 @@
                 </svg>
                 Add to Discord
               </a>
-              <button onclick="openLoginModal()" class="btn btn-glass">
-                Login
+              <button onclick="window.location.href='/api/login'" class="btn btn-glass">
+                Login with Discord
               </button>
             </div>
             <div class="hero-trust">
@@ -1156,9 +1041,8 @@
             <div class="ring ring-3"></div>
             <div class="ring ring-4"></div>
             
-            <!-- Main Hero Logo -->
             <div class="hero-logo-container">
-               <img src="logo.png" alt="Quantum Hero Logo" class="hero-logo-main">
+               <img src="logo.png" alt="Quantum Hero Logo" class="hero-logo-main" onerror="this.src='https://cdn.discordapp.com/attachments/1537127358677520434/1565226534833229885/file_00000000eb5481faa673a17490c24af9.png?ex=6ae4224e&is=6ae2d0ce&hm=fc62d1b7b4a518eead855049686bcd4ad289624e84d3b72e6ce59a3fd4702770&'">
             </div>
 
             <div class="chip chip-1"><span class="dot" style="background:#00f0ff; box-shadow:0 0 10px #00f0ff;"></span>12ms latency</div>
@@ -1407,8 +1291,7 @@
         <div class="footer-grid">
           <div class="footer-brand">
             <a href="#" class="brand">
-              <!-- Footer Logo -->
-              <img src="logo.png" alt="Quantum Logo" class="brand-logo">
+              <img src="logo.png" alt="Quantum Logo" class="brand-logo" onerror="this.src='https://cdn.discordapp.com/attachments/1537127358677520434/1565226534833229885/file_00000000eb5481faa673a17490c24af9.png?ex=6ae4224e&is=6ae2d0ce&hm=fc62d1b7b4a518eead855049686bcd4ad289624e84d3b72e6ce59a3fd4702770&'">
               <span class="brand-name">Quantum</span>
             </a>
             <p>The most advanced Discord bot for moderation, security, and utility. Built to keep your community safe and fast.</p>
@@ -1467,32 +1350,6 @@
     </footer>
   </div>
 
-  <!-- Google Login Modal -->
-  <div class="modal-overlay" id="loginModal">
-    <div class="login-modal">
-      <button class="modal-close" onclick="closeLoginModal()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </button>
-      
-      <!-- Modal Logo -->
-      <img src="logo.png" alt="Quantum Logo" style="width: 70px; height: 70px; border-radius: 18px; margin: 0 auto; object-fit: cover; box-shadow: 0 10px 30px rgba(0,240,255,0.2);">
-      
-      <h3>Welcome to Quantum</h3>
-      <p>Sign in to manage your servers, view analytics, and access premium settings.</p>
-      
-      <!-- Mock Google Login Button -->
-      <button class="google-btn" onclick="mockGoogleLogin()">
-        <svg viewBox="0 0 48 48">
-          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-        </svg>
-        Continue with Google
-      </button>
-    </div>
-  </div>
-
   <script>
     // Spotlight effect tracking mouse
     document.addEventListener('mousemove', (e) => {
@@ -1519,47 +1376,9 @@
     hamburger.addEventListener('click', () => {
       mobileMenu.classList.toggle('open');
     });
-    // Close mobile menu when clicking a link
     mobileMenu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => mobileMenu.classList.remove('open'));
     });
-
-    // Login Modal Logic
-    const loginModal = document.getElementById('loginModal');
-    
-    function openLoginModal() {
-      loginModal.classList.add('active');
-      document.body.style.overflow = 'hidden'; // Prevent background scrolling
-      // Close mobile menu if open
-      mobileMenu.classList.remove('open');
-    }
-
-    function closeLoginModal() {
-      loginModal.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-
-    // Close modal on overlay click
-    loginModal.addEventListener('click', (e) => {
-      if (e.target === loginModal) closeLoginModal();
-    });
-
-    // Mock Google Login
-    function mockGoogleLogin() {
-      const btn = document.querySelector('.google-btn');
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '<span style="color:#333;">Signing in...</span>';
-      btn.style.opacity = '0.8';
-      
-      setTimeout(() => {
-        btn.innerHTML = '<span style="color:#34d399; font-weight:700;">✓ Logged in successfully!</span>';
-        setTimeout(() => {
-          closeLoginModal();
-          btn.innerHTML = originalText;
-          btn.style.opacity = '1';
-        }, 1000);
-      }, 1500);
-    }
 
     // Scroll Reveal Observer
     const revealElements = document.querySelectorAll('.reveal, .manifesto-line, .tl-item');
@@ -1567,7 +1386,7 @@
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          revealObserver.unobserve(entry.target); // Reveal once
+          revealObserver.unobserve(entry.target);
         }
       });
     }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
@@ -1585,12 +1404,11 @@
         
         counters.forEach(counter => {
           const target = parseInt(counter.getAttribute('data-target'));
-          const duration = 2000; // ms
+          const duration = 2000;
           const stepTime = Math.abs(Math.floor(duration / target));
           let current = 0;
           
           const timer = setInterval(() => {
-            // Add a larger step for 1000 so it doesn't take forever
             let step = target > 200 ? Math.ceil(target / 100) : 1; 
             current += step;
             if (current >= target) {
@@ -1598,7 +1416,6 @@
               clearInterval(timer);
             }
             
-            // Format with commas and suffix
             let suffix = '';
             if(target === 1000) suffix = '+';
             if(target === 99) suffix = '%';
@@ -1621,13 +1438,11 @@
       question.addEventListener('click', () => {
         const isOpen = item.classList.contains('open');
         
-        // Close all others
         faqItems.forEach(otherItem => {
           otherItem.classList.remove('open');
           otherItem.querySelector('.faq-a').style.maxHeight = null;
         });
         
-        // Toggle current
         if (!isOpen) {
           item.classList.add('open');
           answer.style.maxHeight = answer.scrollHeight + 'px';
